@@ -2,14 +2,16 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 from Crypto.Cipher import AES
 from threading import Thread
 import sqlite3
 
 
 def launchBrowser(url):
-    #flags
-    b = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument("disable-infobars")
+    b = webdriver.Chrome(chrome_options=chrome_options)
     b.get(url)
     return b
 
@@ -32,12 +34,13 @@ def loadFirstHelper(session,p):
     if not salt:
         return False
     salt = salt[0]
-    PASS = val[1]
+    PASS = bytes.fromhex(val[1])
     obj = AES.new(salt)
-    print(PASS)
     PASS = obj.decrypt(PASS)
+    PASS = str(PASS).replace('b','')
+    PASS = PASS.replace("'",'')
+    print(type(PASS))
     print(PASS)
-    PASS = PASS.strip()
     browser = launchBrowser("https://www.prestocard.ca/en")
     browser.find_element_by_class_name('modalLogin').find_element_by_xpath('.//a').click()
     username  = WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'SignIn_Username')))
@@ -49,6 +52,7 @@ def loadFirstHelper(session,p):
     print(PASS)
     password.send_keys(PASS)
     browser.find_element_by_id('btnsubmit').click()
+
 
 def loadSecond(session):
     print(2)

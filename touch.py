@@ -32,13 +32,14 @@ def register(un,pw):
     print('user created')
     return True
 
-def registerPlatform(username, password, platform,key,ID):
+def registerPlatform(username, password, platform,salt,ID):
     conn = sqlite3.connect(r'data.db')
     cur = conn.cursor()
     while len(password)%16 != 0:
         password += ' '
-    obj = AES.new(key)
+    obj = AES.new(salt)
     ciph = obj.encrypt(password)
+    ciph = ciph.hex()
 
     cur.execute('INSERT INTO platformLogins VALUES ("{0}","{1}","{2}","{3}")'.format(username, ciph, platform,ID))
     conn.commit()

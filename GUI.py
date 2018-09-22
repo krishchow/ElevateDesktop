@@ -7,6 +7,8 @@ import sqlite3
 class Application():
     def __init__(self):
         self.root = tk.Tk()
+        self.root.style = ttk.Style()
+        self.root.style.theme_use('clam')
         self.root.geometry('500x500')
         self.loadLogin()
         tk.mainloop()
