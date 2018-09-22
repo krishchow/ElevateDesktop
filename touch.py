@@ -6,6 +6,9 @@ import sqlite3
 import hashlib
 from random import choice
 from string import ascii_letters
+import os
+import tkinter.ttk as ttk
+from Crypto.Cipher import AES
 def launchBrowser(url):
     #flags
     b = webdriver.Chrome()
@@ -35,6 +38,71 @@ def register(un,pw):
     conn.close()
     print('user created')
     return True
+
+def registerPlatform(username, password, platform,key):
+    conn = sqlite3.connect(r'data.db')
+    cur = conn.cursor()
+    while len(password)%16 != 0:
+        password += ' '
+    
+    obj = AES.new(key)
+    ciph = obj.encrypt(password)
+
+    cur.execute('INSERT INTO platformLogins VALUES ("{0}","{1}","{2}")'.format(username, ciph.hex(), platform))
+    conn.commit()
+    conn.close()
+    print('user created')
+    return True
+
+def addAccount(ID):
+    top = tk.Toplevel()
+    top.title('Please Input Account Details')
+    header = tk.Frame(top)
+    tk.Label(header,text="Please Input Account Details").pack(side='left')
+    header.pack(side='top')
+    combobox = tk.Frame(top,width=150)
+    tkvar = tk.StringVar(top)
+    choices = ['Presto','Library','Volunteer Toronto']
+    radios = []
+    def setVal():
+            usernameEntry.config(state='normal')
+            passwordEntry.config(state='normal')
+            #conn = sqlite3.connect(r'data.db')
+            #cur = conn.cursor()
+            #cur.execute('SELECT username FROM platformLogins WHERE (id="{0}" AND platformID="{1}");'.format(ID,tkvar.get()))
+            #val = list(cur.fetchone())
+            #if val:
+            #    usernameEntry.insert(0,val[0])
+            return
+    for i in choices:
+        r = tk.Radiobutton(combobox, text=i, variable=tkvar, value=i, command=setVal)
+        radios.append(r)
+    for i in radios:
+        i.pack(side='top',anchor='w')
+    
+    combobox.pack(side='left',fill='y')
+    username = tk.Frame(top)
+    tk.Label(username, text='Username:',width=15).pack(side='left')
+    usernameEntry = tk.Entry(username,state='disabled')
+    usernameEntry.pack(side='left')
+    username.pack(side='top')
+    password = tk.Frame(top)
+    tk.Label(password, text='Password:',width=15).pack(side='left')
+    passwordEntry = tk.Entry(password,state='disabled',show="*")
+    passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
+    passwordEntry.bind("<Leave>", lambda e: passwordEntry.configure(show='*'))
+    passwordEntry.pack(side='left')
+    password.pack(side='top')
+    
+    def end():
+        if not tkvar.get():
+            return False
+        val = registerPlatform(usernameEntry.get(),passwordEntry.get(),tkvar.get(),ID)
+        if val:
+            top.destroy()
+            return
+    
+    tk.Button(top, text='Register',command=end).pack(side='top')
 
 def registerUser():
     top = tk.Toplevel()
@@ -96,6 +164,7 @@ def checkUser(username, password):
 
 def loadLogin():
     root = tk.Tk()
+    #root.iconbitmap(img())
     root.geometry('500x500')
     mainFrame = tk.Frame(root)
     header = tk.Label(mainFrame, text="Please Login", font=("Times", 24, "bold"))
@@ -108,7 +177,9 @@ def loadLogin():
     username.pack(side='top',fill='x')
     password = tk.Frame(root)
     tk.Label(password, text='Password:',width=15).pack(side='left')
-    passwordEntry = tk.Entry(password)
+    passwordEntry = tk.Entry(password, show='*')
+    passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
+    passwordEntry.bind("<Leave>", lambda e: passwordEntry.configure(show='*'))
     passwordEntry.pack(side='left')
     password.pack(side='top',fill='x')
 
@@ -123,15 +194,24 @@ def loadLogin():
     tk.Button(buttonFrame, text='Login',command=end).pack(side='left')
     tk.Button(buttonFrame, text='Register',command=registerUser).pack(side='right')
     buttonFrame.pack(side='top')
+    tk.Button(root, text="Exit",command=exit,anchor='e').pack(side='bottom')
     root.mainloop()
 
 def loadMain(ID):
     root = tk.Tk()
+    #root.iconbitmap(img())
     root.geometry('500x500')
     mainFrame = tk.Frame(root)
     header = tk.Label(mainFrame, text="Welcome the Toronto Library")
     header.pack()
     mainFrame.pack(side='top')
+    bottomFrame = tk.Frame(root)
+    def t():
+        root.destroy()
+        loadLogin()
+    tk.Button(bottomFrame, text="Log Out", command=t).pack(side='right')
+    tk.Button(bottomFrame, text="Add A New Account", command=lambda id=ID: addAccount(id)).pack(side='left')
+    bottomFrame.pack(side='bottom',fill='x')
     bodyFrame = tk.Frame(root)
     button1 = tk.Button(bodyFrame,text="hi",command=lambda id=ID: loadFirst(id))
     button2 = tk.Button(bodyFrame,command=lambda id=ID: loadSecond(id))
