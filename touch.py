@@ -3,40 +3,62 @@ import time as T
 import tkinter as tk
 from threading import Thread
 import sqlite3
-
+import hashlib
+from random import choice
+from string import ascii_letters
 def launchBrowser(url):
     #flags
     b = webdriver.Chrome()
     return b
 
-def loginUser(arr):
+def register(un,pw):
+    conn = sqlite3.connect(r'data.db')
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM auth WHERE username="{0}"'.format(un))
+    if cur.fetchone():
+        print('fail:userexists')
+        return False
+    userID = ''
+    while userID == '':
+        userID=''.join(choice(ascii_letters) for i in range(16))
+        cur.execute('SELECT * FROM auth WHERE id="{0}"'.format(userID))
+        if cur.fetchone():
+            userID = ''
+
+    salt = ''.join(choice(ascii_letters) for i in range(12))
+    m = hashlib.sha256()
+    m.update(bytes(pw, 'utf-8'))
+    m.update(bytes(salt, 'utf-8'))
+    salted = m.hexdigest()
+    cur.execute('INSERT INTO auth VALUES ("{0}","{1}","{2}","{3}")'.format(un,salt,salted,userID))
+    conn.commit()
+    conn.close()
+    print('user created')
+    return True
+
+def registerUser():
     top = tk.Toplevel()
-    top.title('Please Login')
+    top.title('Please Register')
     header = tk.Frame(top)
-    tk.Label(header,text="Please Login").pack(side='left')
+    tk.Label(header,text="Please Register").pack(side='left')
     header.pack(side='top')
     username = tk.Frame(top)
-    tk.Label(username, text='Username:').pack(side='left')
+    tk.Label(username, text='Username:',width=15).pack(side='left')
     usernameEntry = tk.Entry(username)
     usernameEntry.pack(side='left')
     username.pack(side='top')
     password = tk.Frame(top)
-    tk.Label(password, text='Password:').pack(side='left')
+    tk.Label(password, text='Password:',width=15).pack(side='left')
     passwordEntry = tk.Entry(password)
     passwordEntry.pack(side='left')
     password.pack(side='top')
     def end():
-        val = checkUser(usernameEntry.get(),passwordEntry.get())
+        val = register(usernameEntry.get(),passwordEntry.get())
         if val:
             top.destroy()
-            arr.append(val[2])
             return
-    tk.Button(top, text='Login',command=end).pack(side='top')
+    tk.Button(top, text='Register',command=end).pack(side='top')
     
-
-def registerUser():
-    #return None
-    pass
 
 def loadFirst(session):
     print(1)
@@ -56,13 +78,21 @@ def loadThird(session):
 def checkUser(username, password):
     conn = sqlite3.connect(r'data.db')
     cur = conn.cursor()
-    cur.execute('SELECT * FROM auth WHERE (username="{0}" AND password="{1}");'.format(username,password))
+    cur.execute('SELECT salt FROM auth WHERE (username="{0}");'.format(username))
     val = cur.fetchone()
-    if val:
-        print(val)
-        return val
-    else:
+    if not val:
+        print('not found')
         return False
+    val = list(val)[0]
+    m = hashlib.sha256()
+    m.update(bytes(password, 'utf-8'))
+    m.update(bytes(val, 'utf-8'))
+    salted = m.hexdigest()
+    cur.execute('SELECT id FROM auth WHERE (username="{0}" and saltedhash="{1}");'.format(username, salted))
+    done = cur.fetchone()
+    if done:
+        return done
+    return False
 
 def loadLogin():
     root = tk.Tk()
@@ -87,9 +117,12 @@ def loadLogin():
         if val:
             print(val)
             root.destroy()
-            loadMain(val[2])
+            loadMain(list(val)[0])
             return
-    tk.Button(root, text='Login',command=end).pack(side='top')
+    buttonFrame = tk.Frame(root)
+    tk.Button(buttonFrame, text='Login',command=end).pack(side='left')
+    tk.Button(buttonFrame, text='Register',command=registerUser).pack(side='right')
+    buttonFrame.pack(side='top')
     root.mainloop()
 
 def loadMain(ID):
