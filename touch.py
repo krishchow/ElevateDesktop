@@ -37,8 +37,8 @@ def registerPlatform(username, password, platform,salt,ID):
     cur = conn.cursor()
     while len(password)%16 != 0:
         password += ' '
-    obj = AES.new(salt)
-    ciph = obj.encrypt(password)
+    obj = AES.new(bytes(salt,'utf-8'), AES.MODE_ECB)
+    ciph = obj.encrypt(bytes(password,'utf-8'))
     ciph = ciph.hex()
 
     cur.execute('INSERT INTO platformLogins VALUES ("{0}","{1}","{2}","{3}")'.format(username, ciph, platform,ID))

@@ -3,9 +3,11 @@ import tkinter.ttk as ttk
 from touch import checkUser,registerPlatform,register
 from browserFunctions import loadFirst,loadSecond,loadThird
 import sqlite3
+import os
 
 class Application():
     def __init__(self):
+        self.sessionID = ''
         self.root = tk.Tk()
         self.root.style = ttk.Style()
         self.root.style.theme_use('clam')
@@ -18,17 +20,17 @@ class Application():
         tk.mainloop()
 
     def renderLogin(self):
-        root = tk.Frame(self.root)
-        mainFrame = tk.Frame(root)
+        root = tk.Frame(self.root, background=self.bg)
+        mainFrame = tk.Frame(root, background=self.bg)
         header = ttk.Label(mainFrame, text="Please Login", font=("Times", 24, "bold"))
         header.pack()
-        mainFrame.pack(side='top')
+        mainFrame.pack(side='top', background=self.bg)
         username = tk.Frame(root)
         ttk.Label(username, text='Username:',width=10,background=self.bg).pack(side='left')
         usernameEntry = ttk.Entry(username)
         usernameEntry.pack(side='left')
         username.pack(side='top',fill='x')
-        password = tk.Frame(root)
+        password = tk.Frame(root, background=self.bg)
         ttk.Label(password, text='Password:',width=10,background=self.bg).pack(side='left')
         passwordEntry = ttk.Entry(password, show='*')
         passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
@@ -43,7 +45,7 @@ class Application():
                 root.pack_forget()
                 self.loadMain(list(val)[0])
                 return
-        buttonFrame = tk.Frame(root)
+        buttonFrame = tk.Frame(root, background=self.bg)
         ttk.Button(buttonFrame, text='Login',command=end,style='Main.TButton').pack(side='left')
         ttk.Button(buttonFrame, text='Register',command=registerUser,style='Main.TButton').pack(side='right')
         buttonFrame.pack(side='top')
@@ -51,19 +53,19 @@ class Application():
         root.pack(fill='both',expand=True)
     
     def loadMain(self, ID):
-        root = tk.Frame(self.root)
-        mainFrame = tk.Frame(root)
+        root = tk.Frame(self.root, background=self.bg)
+        mainFrame = tk.Frame(root, background=self.bg)
         header = ttk.Label(mainFrame, text="Welcome the Toronto Library",background=self.bg, font=("Times", 24, "bold"))
         header.pack()
         mainFrame.pack(side='top')
-        bottomFrame = tk.Frame(root)
+        bottomFrame = tk.Frame(root, background=self.bg)
         def t():
             root.pack_forget()
             self.loadLogin()
         ttk.Button(bottomFrame, text="Log Out", command=t,style='Main.TButton').pack(side='right')
         ttk.Button(bottomFrame, text="Add A New Account", command=lambda id=ID: addAccount(id),style='Main.TButton').pack(side='left')
         bottomFrame.pack(side='bottom',fill='x')
-        bodyFrame = tk.Frame(root)
+        bodyFrame = tk.Frame(root, background=self.bg)
         button1 = ttk.Button(bodyFrame,text="Presto",command=lambda id=ID: loadFirst(id),style='Main.TButton')
         button2 = ttk.Button(bodyFrame,text="Library",command=lambda id=ID: loadSecond(id),style='Main.TButton')
         button3 = ttk.Button(bodyFrame,text="Childcare",command=lambda id=ID: loadThird(id),style='Main.TButton')
@@ -72,18 +74,19 @@ class Application():
         root.pack(fill='both',expand=True)
 
     def loadLogin(self):
-        root = tk.Frame(self.root)
-        mainFrame = tk.Frame(root)
+        width = 10 if os.name=='nt' else 8
+        root = tk.Frame(self.root, background=self.bg)
+        mainFrame = tk.Frame(root, background=self.bg)
         header = ttk.Label(mainFrame, text="Please Login", font=("Times", 24, "bold"),background=self.bg)
         header.pack()
         mainFrame.pack(side='top')
-        username = tk.Frame(root)
-        ttk.Label(username, text='Username:',width=8,background=self.bg).pack(side='left')
+        username = tk.Frame(root, background=self.bg)
+        ttk.Label(username, text='Username:',width=width,background=self.bg).pack(side='left')
         usernameEntry = ttk.Entry(username)
         usernameEntry.pack(side='right')
         username.pack(side='top')
-        password = tk.Frame(root)
-        ttk.Label(password, text='Password:',width=8,background=self.bg).pack(side='left')
+        password = tk.Frame(root, background=self.bg)
+        ttk.Label(password, text='Password:',width=width,background=self.bg).pack(side='left')
         passwordEntry = ttk.Entry(password, show='*')
         passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
         passwordEntry.bind("<Leave>", lambda e: passwordEntry.configure(show='*'))
@@ -97,7 +100,7 @@ class Application():
                 root.pack_forget()
                 self.loadMain(list(val)[0])
                 return
-        buttonFrame = tk.Frame(root)
+        buttonFrame = tk.Frame(root, background=self.bg)
         ttk.Button(buttonFrame, text='Login',command=end,style='Main.TButton').pack(side='left',pady=5)
         ttk.Button(buttonFrame, text='Register',command=registerUser,style='Main.TButton').pack(side='right',pady=5)
         buttonFrame.pack(side='top')
@@ -106,11 +109,12 @@ class Application():
 
 def addAccount(ID):
     top = tk.Toplevel()
+    top['bg'] = background
     top.title('Please Input Account Details')
-    header = tk.Frame(top)
-    ttk.Label(header,text="Please Input Account Details",background=background).pack(side='left')
+    header = tk.Frame(top, background=background)
+    ttk.Label(header,text="Please Input Account Details",background=background, font=("Times", 16, "bold")).pack(side='left')
     header.pack(side='top')
-    combobox = tk.Frame(top,width=150)
+    combobox = tk.Frame(top,width=150, background=background)
     tkvar = tk.StringVar(top)
     choices = ['Presto','Library','Volunteer Toronto']
     radios = []
@@ -118,6 +122,7 @@ def addAccount(ID):
             usernameEntry.config(state='normal')
             passwordEntry.config(state='normal')
             usernameEntry.delete('0','end')
+            passwordEntry.delete('0','end')
             conn = sqlite3.connect(r'data.db')
             cur = conn.cursor()
             cur.execute('SELECT username FROM platformLogins WHERE (id="{0}" AND platformID="{1}");'.format(ID,tkvar.get()))
@@ -126,18 +131,18 @@ def addAccount(ID):
                 usernameEntry.insert(0,list(val)[0])
             return
     for i in choices:
-        r = tk.Radiobutton(combobox, text=i, variable=tkvar, value=i, command=setVal)
+        r = tk.Radiobutton(combobox, text=i, variable=tkvar, value=i, command=setVal, background=background)
         radios.append(r)
     for i in radios:
         i.pack(side='top',anchor='w')
     
     combobox.pack(side='left',fill='y')
-    username = tk.Frame(top)
+    username = tk.Frame(top, background=background)
     ttk.Label(username, text='Username:',width=15,background=background).pack(side='left')
     usernameEntry = ttk.Entry(username,state='disabled')
     usernameEntry.pack(side='left')
     username.pack(side='top')
-    password = tk.Frame(top)
+    password = tk.Frame(top, background=background)
     ttk.Label(password, text='Password:',width=15,background=background).pack(side='left')
     passwordEntry = ttk.Entry(password,state='disabled',show="*")
     passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
@@ -161,16 +166,17 @@ def addAccount(ID):
 
 def registerUser():
     top = tk.Toplevel()
+    top['bg'] = background
     top.title('Please Register')
-    header = tk.Frame(top)
-    ttk.Label(header,text="Please Register",background=background).pack(side='left')
+    header = tk.Frame(top, background=background)
+    ttk.Label(header,text="Please Register",background=background,font=("Times", 16, "bold")).pack(side='left')
     header.pack(side='top')
-    username = tk.Frame(top)
+    username = tk.Frame(top, background=background)
     ttk.Label(username, text='Username:',width=15,background=background).pack(side='left')
     usernameEntry = ttk.Entry(username)
     usernameEntry.pack(side='left')
     username.pack(side='top')
-    password = tk.Frame(top)
+    password = tk.Frame(top, background=background)
     ttk.Label(password, text='Password:',width=15,background=background).pack(side='left')
     passwordEntry = ttk.Entry(password)
     passwordEntry.pack(side='left')
