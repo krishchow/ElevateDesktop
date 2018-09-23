@@ -41,7 +41,6 @@ def loadFirst(session):
     t = Thread(target=loadFirstHelper, args=(session,"Presto"))
     t.start()
     
-
 def loadFirstHelper(session,p):
     login = getUnencrypted(session,p)
     if not login:
@@ -60,8 +59,42 @@ def loadFirstHelper(session,p):
 
 def loadSecond(session):
     print(2)
-    pass
+    t = Thread(target=loadSecondtHelper, args=(session,"Library"))
+    t.start()
+
+def loadSecondtHelper(session,p):
+    login = getUnencrypted(session,p)
+    if not login:
+        return False
+    
+    browser = launchBrowser("https://www.torontopubliclibrary.ca/signin")
+    username  = WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'userId')))
+    browser.find_element_by_id('userId').click()
+    username = browser.find_element_by_id('userId')
+    username.send_keys(login[0])
+    browser.find_element_by_id('password').click()
+    password = browser.find_element_by_id('password')
+    password.send_keys(login[1])
+    browser.find_element_by_xpath('//*[@value="Sign In"]').click()
+
 
 def loadThird(session):
     print(3)
-    pass
+    t = Thread(target=loadThirdHelper, args=(session,"Volunteer Toronto"))
+    t.start()
+
+
+def loadThirdHelper(session,p):
+    login = getUnencrypted(session,p)
+    if not login:
+        return False
+    
+    browser = launchBrowser("https://www.volunteertoronto.ca/login.aspx")
+    username  = WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'u')))
+    browser.find_element_by_id('u').click()
+    username = browser.find_element_by_id('u')
+    username.send_keys(login[0])
+    browser.find_element_by_id('p').click()
+    password = browser.find_element_by_id('p')
+    password.send_keys(login[1])
+    browser.find_element_by_name('btn_submitLogin').click()
