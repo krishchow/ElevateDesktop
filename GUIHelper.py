@@ -31,6 +31,8 @@ def addAccount(ID,db):
             if tkvar.get() == 'Presto':
                 Register.config(command=quickLaunchInst)
                 Register.pack(side='left')
+            else:
+                Register.pack_forget()
             if val:
                 usernameEntry.insert(0,list(val)[0])
             return
