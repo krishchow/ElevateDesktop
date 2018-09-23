@@ -7,28 +7,26 @@ import os
 from Crypto.Cipher import AES
 #from browserFunctions import *
 
-def register(un,pw):
-    conn = sqlite3.connect(r'data.db')
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM auth WHERE username="{0}"'.format(un))
-    if cur.fetchone():
+def register(un,pw,db):
+    db.cur.execute('SELECT * FROM auth WHERE username="{0}"'.format(un))
+    if db.cur.fetchone():
         print('fail:userexists')
         return False
     userID = ''
     while userID == '':
         userID=''.join(choice(ascii_letters) for i in range(16))
-        cur.execute('SELECT * FROM auth WHERE id="{0}"'.format(userID))
-        if cur.fetchone():
+        db.cur.execute('SELECT * FROM auth WHERE id="{0}"'.format(userID))
+        if db.cur.fetchone():
             userID = ''
-
-    salt = ''.join(choice(ascii_letters) for i in range(16))
+    allC = ascii_letters
+    allC += [1,2,3,4,5,6,7,8,9,0]
+    salt = ''.join(choice(allC) for i in range(16))
     m = hashlib.sha256()
     m.update(bytes(pw, 'utf-8'))
     m.update(bytes(salt, 'utf-8'))
     salted = m.hexdigest()
-    cur.execute('INSERT INTO auth VALUES ("{0}","{1}","{2}","{3}")'.format(un,salt,salted,userID))
-    conn.commit()
-    conn.close()
+    db.cur.execute('INSERT INTO auth VALUES ("{0}","{1}","{2}","{3}")'.format(un,salt,salted,userID))
+    db.conn.commit()
     print('user created')
     return True
 

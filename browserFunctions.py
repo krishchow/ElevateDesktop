@@ -36,11 +36,24 @@ def launchBrowser(url):
     b.get(url)
     return b
 
-def loadFirst(session):
+def loadFirst(session,reg=False):
     print(1)
-    t = Thread(target=loadFirstHelper, args=(session,"Presto"))
-    t.start()
-    
+    if reg:
+        t = Thread(target=loadFirstRegistration, args=(session))
+        t.start()
+    else:
+        t = Thread(target=loadFirstHelper, args=(session,"Presto"))
+        t.start()
+
+def loadFirstRegistration(session,p):
+    browser = launchBrowser("https://www.prestocard.ca/en")
+    browser.find_element_by_class_name('modalLogin').find_element_by_xpath('.//a').click()
+    WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'SignIn_Username')))
+    browser.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    browser.find_element_by_id('createaccount-btn').click()
+
+
+
 def loadFirstHelper(session,p):
     login = getUnencrypted(session,p)
     if not login:
