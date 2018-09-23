@@ -54,7 +54,8 @@ def loadFirstRegistration():
 def loadFirstHelper(session,p):
     login = getUnencrypted(session,p)
     if not login:
-        return False
+        browser = launchBrowser("https://www.prestocard.ca/en")
+        return
     browser = launchBrowser("https://www.prestocard.ca/en")
     browser.find_element_by_class_name('modalLogin').find_element_by_xpath('.//a').click()
     username  = WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'SignIn_Username')))
@@ -75,7 +76,8 @@ def loadSecond(session):
 def loadSecondtHelper(session,p):
     login = getUnencrypted(session,p)
     if not login:
-        return False
+        browser = launchBrowser("https://www.torontopubliclibrary.ca/signin")
+        return
     
     browser = launchBrowser("https://www.torontopubliclibrary.ca/signin")
     username  = WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'userId')))
@@ -97,7 +99,8 @@ def loadThird(session):
 def loadThirdHelper(session,p):
     login = getUnencrypted(session,p)
     if not login:
-        return False
+        browser = launchBrowser("https://www.volunteertoronto.ca/login.aspx")
+        return
     
     browser = launchBrowser("https://www.volunteertoronto.ca/login.aspx")
     username  = WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'u')))

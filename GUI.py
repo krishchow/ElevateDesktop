@@ -14,6 +14,7 @@ class Application():
         self.db = DBManager()
         self.db.CreateTables()
         self.root = tk.Tk()
+        self.root.title("myTOWN")
         self.root.style = ttk.Style()
         self.root.style.theme_use('clam')
         self.root.geometry('500x500')
@@ -94,8 +95,8 @@ class Application():
         password = tk.Frame(root, background=self.bg)
         ttk.Label(password, text='Password:',width=width,background=self.bg).pack(side='left')
         passwordEntry = ttk.Entry(password, show='*')
-        passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
-        passwordEntry.bind("<Leave>", lambda e: passwordEntry.configure(show='*'))
+        #passwordEntry.bind("<Enter>", lambda e: passwordEntry.configure(show=''))
+        #passwordEntry.bind("<Leave>", lambda e: passwordEntry.configure(show='*'))
         passwordEntry.pack(side='right')
         password.pack(side='top')
 
