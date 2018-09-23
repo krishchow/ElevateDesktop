@@ -30,16 +30,16 @@ def loadChromeDriver():
         print('ERROR:NO DATA FILE')
 
 def createBrowser(headless=False, blockImages=False, hideConsole = False):
-    loadChromeDriver()
     chromeOptions = ChromeOptions()
-    if blockImages: prefs = {"profile.managed_default_content_settings.images":2}; chromeOptions.add_experimental_option("prefs",prefs)
-    if headless: chromeOptions.add_argument("--headless"); chromeOptions.add_argument("--window-size=1920x1080")
-    chrome_serv = webdriver.myService('path--to--exe.exe')
     chromeOptions.add_argument("disable-infobars")
     chromeOptions.add_argument("--window-size=1920,1080")
     if name == 'posix':
         browser = webdriver.myWebDriver(chrome_options=chromeOptions)
         return browser
+    loadChromeDriver()
+    if blockImages: prefs = {"profile.managed_default_content_settings.images":2}; chromeOptions.add_experimental_option("prefs",prefs)
+    if headless: chromeOptions.add_argument("--headless"); chromeOptions.add_argument("--window-size=1920x1080")
+    chrome_serv = webdriver.myService('path--to--exe.exe')
     #chrome_serv.service_args = ["hide_console", ]
     if isfile('chromedriver.exe'):
         drive = abspath("chromedriver.exe")
