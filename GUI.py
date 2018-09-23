@@ -17,8 +17,9 @@ class Application():
         self.root.style.theme_use('clam')
         self.root.geometry('500x500')
         s = ttk.Style()
-        s.configure('Main.TButton', foreground=foreground, background='#F2F1EF')
+        s.configure('Main.TButton', foreground=foreground, background=blueBackground)
         ttk.Style().layout("Main.TButton", [("Button.focus", None),("Button.background", {"children":[("Button.button", {"children":[("Button.padding", {"children":[("Button.label", {"side": "left", "expand": 1})]})]})]})])
+        ttk.Style().map("Main.TButton", foreground=[('active', 'white')], background=[('active', '#013243')])
         self.bg = background
         self.loadLogin()
         tk.mainloop()
@@ -112,6 +113,7 @@ class Application():
         root.pack(fill='both',expand=True)
 
 if __name__ == '__main__':
-    background = '#ffffff'    
-    foreground = '#000000'
+    background = '#ffffff'
+    foreground = '#ffffff'
+    blueBackground = '#0968a3'
     a = Application()
