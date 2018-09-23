@@ -1,10 +1,14 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from touch import registerPlatform,register
-
-
+from browserFunctions import loadFirstRegistration
+from threading import Thread
 background = '#ffffff'
 foreground = '#000000'
+def quickLaunchInst():
+    t = Thread(target=loadFirstRegistration)
+    t.start()
+
 def addAccount(ID,db):
     top = tk.Toplevel()
     top['bg'] = background
@@ -23,6 +27,9 @@ def addAccount(ID,db):
             passwordEntry.delete('0','end')
             db.cur.execute('SELECT username FROM platformLogins WHERE (id="{0}" AND platformID="{1}");'.format(ID,tkvar.get()))
             val = db.cur.fetchone()
+            if tkvar.get() == 'Presto':
+                Register.config(command=quickLaunchInst)
+                Register.pack(side='left')
             if val:
                 usernameEntry.insert(0,list(val)[0])
             return
@@ -45,6 +52,9 @@ def addAccount(ID,db):
     passwordEntry.bind("<Leave>", lambda e: passwordEntry.configure(show='*'))
     passwordEntry.pack(side='left')
     password.pack(side='top')
+    buttonFrame = tk.Frame(top)
+    Register = ttk.Button(buttonFrame, text='Create an account',command=None,style='Main.TButton')
+    
     
     def end():
         if not tkvar.get():
@@ -56,7 +66,8 @@ def addAccount(ID,db):
             top.destroy()
             return
     
-    ttk.Button(top, text='Register',command=end,style='Main.TButton').pack(side='right')
+    ttk.Button(buttonFrame, text='Add Account',command=end,style='Main.TButton').pack(side='right')
+    buttonFrame.pack(side='top',fill='x')
 
 def registerUser(db):
     top = tk.Toplevel()
@@ -81,3 +92,4 @@ def registerUser(db):
             top.destroy()
             return
     ttk.Button(top, text='Register',command=end,style='Main.TButton').pack(side='top')
+    

@@ -42,7 +42,7 @@ def loadFirst(session,reg=False):
         t = Thread(target=loadFirstHelper, args=(session,"Presto"))
         t.start()
 
-def loadFirstRegistration(session,p):
+def loadFirstRegistration():
     browser = launchBrowser("https://www.prestocard.ca/en")
     browser.find_element_by_class_name('modalLogin').find_element_by_xpath('.//a').click()
     WebDriverWait(browser, 5).until(EC.visibility_of_element_located((By.ID, 'SignIn_Username')))
