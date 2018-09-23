@@ -5,6 +5,7 @@ from browserFunctions import loadFirstRegistration
 from threading import Thread
 background = '#ffffff'
 foreground = '#000000'
+changedfont = 'ms sans serif'
 def quickLaunchInst():
     t = Thread(target=loadFirstRegistration)
     t.start()
@@ -14,7 +15,7 @@ def addAccount(ID,db):
     top['bg'] = background
     top.title('Please Input Account Details')
     header = tk.Frame(top, background=background)
-    ttk.Label(header,text="Please Input Account Details",background=background, font=("Times", 16, "bold")).pack(side='left')
+    ttk.Label(header,text="Please Input Account Details",background=background, font=(changedfont, 16, "bold")).pack(side='left')
     header.pack(side='top')
     combobox = tk.Frame(top,width=150, background=background)
     tkvar = tk.StringVar(top)
@@ -74,7 +75,7 @@ def registerUser(db):
     top['bg'] = background
     top.title('Please Register')
     header = tk.Frame(top, background=background)
-    ttk.Label(header,text="Please Register",background=background,font=("Times", 16, "bold")).pack(side='left')
+    ttk.Label(header,text="Please Register",background=background,font=(changedfont, 16, "bold")).pack(side='left')
     header.pack(side='top')
     username = tk.Frame(top, background=background)
     ttk.Label(username, text='Username:',width=15,background=background).pack(side='left')

@@ -6,6 +6,7 @@ from manageDB import DBManager
 from GUIHelper import *
 import sqlite3
 import os
+changedfont = 'ms sans serif'
 
 class Application():
     def __init__(self):
@@ -27,7 +28,7 @@ class Application():
     def renderLogin(self):
         root = tk.Frame(self.root, background=self.bg)
         mainFrame = tk.Frame(root, background=self.bg)
-        header = ttk.Label(mainFrame, text="Please Login", font=("Times", 24, "bold"))
+        header = ttk.Label(mainFrame, text="Please Login", font=(changedfont, 24, "bold"))
         header.pack()
         mainFrame.pack(side='top', background=self.bg)
         username = tk.Frame(root)
@@ -60,7 +61,7 @@ class Application():
     def loadMain(self, ID):
         root = tk.Frame(self.root, background=self.bg)
         mainFrame = tk.Frame(root, background=self.bg)
-        header = ttk.Label(mainFrame, text="Welcome the Toronto Library",background=self.bg, font=("Times", 24, "bold"))
+        header = ttk.Label(mainFrame, text="Welcome the Toronto Library",background=self.bg, font=(changedfont, 24, "bold"))
         header.pack()
         mainFrame.pack(side='top')
         bottomFrame = tk.Frame(root, background=self.bg)
@@ -82,7 +83,7 @@ class Application():
         width = 10 if os.name=='nt' else 8
         root = tk.Frame(self.root, background=self.bg)
         mainFrame = tk.Frame(root, background=self.bg)
-        header = ttk.Label(mainFrame, text="Please Login", font=("Times", 24, "bold"),background=self.bg)
+        header = ttk.Label(mainFrame, text="Please Login", font=(changedfont, 24, "bold"),background=self.bg)
         header.pack()
         mainFrame.pack(side='top')
         username = tk.Frame(root, background=self.bg)
