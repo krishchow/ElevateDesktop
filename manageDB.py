@@ -1,16 +1,21 @@
 import sqlite3
 
-conn = sqlite3.connect(r'data.db')
-cur = conn.cursor()
-cur.execute('CREATE TABLE IF NOT EXISTS auth (username, salt, saltedhash,id);')
-cur.execute('CREATE TABLE IF NOT EXISTS platformLogins (username, password,platformID,id);')
+class DBManager():
+    def __init__(self):
+        self.conn = sqlite3.connect(r'data.db')
+        self.cur = self.conn.cursor()
 
+    def CreateTables(self,db):
+        self.cur.execute('CREATE TABLE IF NOT EXISTS auth (username, salt, saltedhash,id);')
+        self.cur.execute('CREATE TABLE IF NOT EXISTS platformLogins (username, password,platformID,id);')
 
-
-cur.execute('INSERT INTO auth VALUES ("k","c","b", "123123");')
-cur.execute('INSERT INTO platformLogins VALUES ("krish","chowdhary","Presto", "123123");')
-
-
-
-conn.commit()
-conn.close()
+    def addAccount(self,*args,table):
+        authStr = ''
+        Arg = list(args)
+        for i in range(len(Arg)):
+            if i != len(Arg)-1:
+                authStr += '"{' + str(i) + '}",'
+            else:
+                authStr += '"{' + str(i) + '}"'
+        self.cur.execute('INSERT INTO {0} VALUES ({1});'.format(table,authStr).format(*args))
+        self.conn.commit()

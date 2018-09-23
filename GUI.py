@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from touch import checkUser,registerPlatform,register
 from browserFunctions import loadFirst,loadSecond,loadThird
+from manageDB import *
 import sqlite3
 import os
 
