@@ -1,4 +1,4 @@
-from selenium import webdriver
+import Master
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -29,10 +29,7 @@ def getUnencrypted(session,p):
     return [val[0], PASS]
 
 def launchBrowser(url):
-    chrome_options = Options()
-    chrome_options.add_argument("disable-infobars")
-    chrome_options.add_argument("--window-size=1920,1080")
-    b = webdriver.Chrome(chrome_options=chrome_options)
+    b = Master.createBrowser()
     b.get(url)
     return b
 
