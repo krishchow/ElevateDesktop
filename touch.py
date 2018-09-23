@@ -18,7 +18,7 @@ def register(un,pw,db):
         db.cur.execute('SELECT * FROM auth WHERE id="{0}"'.format(userID))
         if db.cur.fetchone():
             userID = ''
-    allC = ascii_letters
+    allC = list(ascii_letters)
     allC += [1,2,3,4,5,6,7,8,9,0]
     salt = ''.join(choice(allC) for i in range(16))
     m = hashlib.sha256()
